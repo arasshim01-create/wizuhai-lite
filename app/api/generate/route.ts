@@ -1,13 +1,14 @@
 import OpenAI from "openai";
 
 export async function POST(req: Request) {
-  const { message } = await req.json();
+  try {
+    const { message } = await req.json();
 
-  const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-  });
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
 
-  const prompt = `
+    const prompt = `
 A user received this message:
 
 "${message}"
@@ -21,12 +22,21 @@ Rules:
 - Do not explain anything
 `;
 
-  const completion = await openai.chat.completions.create({
-    model: "gpt-4o-mini",
-    messages: [{ role: "user", content: prompt }],
-  });
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+        { role: "user", content: prompt }
+      ],
+    });
 
-  return Response.json({
-    replies: completion.choices[0].message.content,
-  });
+    const text = completion.choices[0].message.content || "";
+
+    const replies = text.split("\n").filter(Boolean);
+
+    return Response.json({ replies });
+
+  } catch (error) {
+    console.error(error);
+    return Response.json({ error: "Failed to generate replies" }, { status: 500 });
+  }
 }
