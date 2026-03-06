@@ -43,9 +43,9 @@ export default function Home() {
         fontFamily: "Arial",
       }}
     >
-      <h1 style={{ fontSize: 34, fontWeight: "bold" }}>
-        Wizu<span style={{ color: "#6c5ce7" }}>hAI</span>
-      </h1>
+      <h1>
+  Wizuh<span style={{ color: "#6366f1" }}>AI</span>
+</h1>
 
       <textarea
         placeholder="Paste the message you received..."
