@@ -16,10 +16,7 @@ export default function Home() {
     });
 
     const data = await res.json();
-
-    if (data.replies) {
-      setReplies(data.replies.map((r: any) => r.text || r));
-    }
+    setReplies(data.replies || []);
   }
 
   function copyReply(text: string, index: number) {
@@ -35,23 +32,26 @@ export default function Home() {
     <main
       style={{
         minHeight: "100vh",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
         background: "#0f0f0f",
         color: "white",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
         fontFamily: "Arial",
       }}
     >
       <div style={{ width: 500, textAlign: "center" }}>
-        <h1 style={{ fontSize: 40, marginBottom: 10 }}>
-          Wizu<span style={{ color: "#000000" }}>h</span>AI
+        
+        {/* Title */}
+        <h1 style={{ fontSize: 40, marginBottom: 10, color: "white" }}>
+          Wizuh<span style={{ color: "#6c63ff" }}>AI</span>
         </h1>
 
         <p style={{ marginBottom: 30, color: "#aaa" }}>
           Generate smart replies instantly
         </p>
 
+        {/* Input */}
         <textarea
           placeholder="Paste the message you received..."
           value={message}
@@ -67,6 +67,7 @@ export default function Home() {
           }}
         />
 
+        {/* Button */}
         <button
           onClick={generateReply}
           style={{
@@ -83,42 +84,41 @@ export default function Home() {
           Generate Reply
         </button>
 
-        {replies.length > 0 && (
-          <div style={{ marginTop: 30 }}>
-            {replies.map((reply, index) => (
-              <div
-                key={index}
+        {/* Replies */}
+        <div style={{ marginTop: 30 }}>
+          {replies.map((reply, index) => (
+            <div
+              key={index}
+              style={{
+                background: "#1a1a1a",
+                padding: 15,
+                borderRadius: 8,
+                marginBottom: 10,
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <span style={{ textAlign: "left" }}>{reply}</span>
+
+              <button
+                onClick={() => copyReply(reply, index)}
                 style={{
-                  marginTop: 15,
-                  padding: 15,
-                  borderRadius: 8,
-                  background: "#1a1a1a",
-                  textAlign: "left",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
+                  marginLeft: 10,
+                  background: "#333",
+                  border: "none",
+                  color: "white",
+                  padding: "6px 10px",
+                  borderRadius: 6,
+                  cursor: "pointer",
                 }}
               >
-                <span>{reply}</span>
+                {copiedIndex === index ? "Copied!" : "Copy"}
+              </button>
+            </div>
+          ))}
+        </div>
 
-                <button
-                  onClick={() => copyReply(reply, index)}
-                  style={{
-                    marginLeft: 10,
-                    padding: "6px 10px",
-                    borderRadius: 6,
-                    border: "none",
-                    background: "#6c63ff",
-                    color: "white",
-                    cursor: "pointer",
-                  }}
-                >
-                  {copiedIndex === index ? "Copied!" : "Copy"}
-                </button>
-              </div>
-            ))}
-          </div>
-        )}
       </div>
     </main>
   );
