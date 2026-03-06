@@ -4,8 +4,13 @@ import { useState } from "react";
 export default function Home() {
   const [message, setMessage] = useState("");
   const [replies, setReplies] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
 
   async function generateReply() {
+    if (!message) return;
+
+    setLoading(true);
+
     const res = await fetch("/api/reply", {
       method: "POST",
       headers: {
@@ -15,24 +20,27 @@ export default function Home() {
     });
 
     const data = await res.json();
-    setReplies(data.replies || []);
+
+    if (data.replies) {
+      setReplies(data.replies);
+    }
+
+    setLoading(false);
   }
 
   return (
     <main
       style={{
         minHeight: "100vh",
-        background: "#0f0f0f",
-        color: "white",
+        background: "#000",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
+        color: "#fff",
         fontFamily: "Arial",
       }}
     >
       <div style={{ width: 500, textAlign: "center" }}>
-        
-        {/* TITLE */}
         <h1 style={{ fontSize: 40, marginBottom: 10 }}>
           Wizuh<span style={{ color: "#6c63ff" }}>AI</span>
         </h1>
@@ -41,60 +49,56 @@ export default function Home() {
           Generate smart replies instantly
         </p>
 
-        {/* INPUT */}
         <textarea
-          placeholder="Paste the message you received..."
+          placeholder="Paste message here..."
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           style={{
             width: "100%",
             height: 120,
-            padding: 12,
-            borderRadius: 8,
+            padding: 15,
+            borderRadius: 10,
             border: "1px solid #333",
-            background: "#1a1a1a",
-            color: "white",
-            fontSize: 14,
+            background: "#111",
+            color: "#fff",
+            fontSize: 16,
+            marginBottom: 20,
           }}
         />
 
-        {/* BUTTON */}
         <button
           onClick={generateReply}
+          disabled={loading}
           style={{
-            marginTop: 20,
-            padding: "12px 20px",
-            borderRadius: 8,
-            border: "none",
             background: "#6c63ff",
-            color: "white",
+            color: "#fff",
+            border: "none",
+            padding: "12px 25px",
             fontSize: 16,
+            borderRadius: 8,
             cursor: "pointer",
+            marginBottom: 30,
           }}
         >
-          Generate Reply
+          {loading ? "Generating..." : "Generate Reply"}
         </button>
 
-        {/* REPLIES */}
-        {replies.length > 0 && (
-          <div style={{ marginTop: 30 }}>
-            {replies.map((reply, i) => (
-              <div
-                key={i}
-                style={{
-                  background: "#1a1a1a",
-                  padding: 15,
-                  borderRadius: 8,
-                  marginBottom: 10,
-                  textAlign: "left",
-                }}
-              >
-                {reply}
-              </div>
-            ))}
-          </div>
-        )}
-
+        <div style={{ textAlign: "left" }}>
+          {replies.map((reply, i) => (
+            <div
+              key={i}
+              style={{
+                background: "#111",
+                padding: 15,
+                borderRadius: 10,
+                marginBottom: 10,
+                border: "1px solid #333",
+              }}
+            >
+              {reply}
+            </div>
+          ))}
+        </div>
       </div>
     </main>
   );
