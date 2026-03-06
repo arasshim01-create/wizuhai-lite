@@ -89,7 +89,7 @@ export default function Home() {
                   textAlign: "left",
                 }}
               >
-                {reply.text || reply}
+                {reply}
               </div>
             ))}
           </div>
