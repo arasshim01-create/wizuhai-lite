@@ -21,12 +21,14 @@ export default function Home() {
     });
 
     const data = await res.json();
-    setReplies(data.replies);
+
+    setReplies(data.replies || []);
     setLoading(false);
   };
 
   const copy = (text: string, index: number) => {
     navigator.clipboard.writeText(text);
+
     setCopiedIndex(index);
 
     setTimeout(() => {
@@ -37,27 +39,20 @@ export default function Home() {
   return (
     <main
       style={{
-  width: "100%",
-  height: 120,
-  padding: 14,
-  fontSize: 16,
-  borderRadius: 8,
-  border: "1px solid #ccc"
-}}
+        padding: 40,
+        maxWidth: 700,
+        margin: "auto",
+        fontFamily: "Arial",
       }}
     >
-     <h1
-  style={{
-    fontSize: 42,
-    fontWeight: "bold",
-    marginBottom: 20
-  }}
->
-  Wizu<span style={{ color: "#6c63ff" }}>hAI</span>
-</h1>
+      {/* Title */}
+      <h1 style={{ fontSize: 40, marginBottom: 10 }}>
+        Wizu<span style={{ color: "#6c63ff" }}>hAI</span>
+      </h1>
 
+      {/* Input */}
       <textarea
-        placeholder="Paste the message you received..."
+        placeholder="Paste message you received..."
         value={message}
         onChange={(e) => setMessage(e.target.value)}
         style={{
@@ -71,6 +66,7 @@ export default function Home() {
       <br />
       <br />
 
+      {/* Generate button */}
       <button
         onClick={generate}
         style={{
@@ -82,6 +78,7 @@ export default function Home() {
         {loading ? "Generating..." : "Generate Replies"}
       </button>
 
+      {/* Replies */}
       {replies.map((r, i) => (
         <div
           key={i}
@@ -95,13 +92,12 @@ export default function Home() {
             alignItems: "center",
           }}
         >
-          <span>{r.text}</span>
+          <p style={{ margin: 0 }}>{r.text}</p>
 
           <button
             onClick={() => copy(r.text, i)}
             style={{
-              fontSize: 14,
-              padding: "6px 10px",
+              padding: "6px 12px",
               cursor: "pointer",
             }}
           >
@@ -110,11 +106,12 @@ export default function Home() {
         </div>
       ))}
 
+      {/* Generate again */}
       {replies.length > 0 && (
         <button
           onClick={generate}
           style={{
-            marginTop: 15,
+            marginTop: 20,
             padding: "10px 18px",
             fontSize: 16,
             cursor: "pointer",
