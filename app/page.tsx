@@ -43,7 +43,7 @@ export default function Home() {
         fontFamily: "Arial",
       }}
     >
-      <h1>
+      <h1 style={{ fontSize: "36px", fontWeight: "bold", marginBottom: 20 }}>
   Wizuh<span style={{ color: "#6366f1" }}>AI</span>
 </h1>
 
