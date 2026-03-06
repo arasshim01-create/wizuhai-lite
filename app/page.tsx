@@ -1,74 +1,119 @@
 "use client";
-
 import { useState } from "react";
 
 export default function Home() {
   const [message, setMessage] = useState("");
-  const [replies, setReplies] = useState<string[]>([]);
+  const [replies, setReplies] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
 
-  async function generateReplies() {
+  const generate = async () => {
+    if (!message) return;
+
     setLoading(true);
 
     const res = await fetch("/api/generate", {
       method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({ message }),
     });
 
     const data = await res.json();
-
-    const splitReplies = data.replies
-      .split("\n")
-      .map((r: string) => r.trim())
-      .filter((r: string) => r.length > 0);
-
-    setReplies(splitReplies);
+    setReplies(data.replies);
     setLoading(false);
-  }
+  };
 
-  function copyReply(text: string) {
+  const copy = (text: string, index: number) => {
     navigator.clipboard.writeText(text);
-  }
+    setCopiedIndex(index);
+
+    setTimeout(() => {
+      setCopiedIndex(null);
+    }, 1500);
+  };
 
   return (
-  <main style={{ padding: 40, maxWidth: 600 }}>
-    <h1>WizuhAI</h1>
+    <main
+      style={{
+        padding: 40,
+        maxWidth: 700,
+        margin: "auto",
+        fontFamily: "Arial",
+      }}
+    >
+      <h1 style={{ fontSize: 34, fontWeight: "bold" }}>
+        Wizu<span style={{ color: "#6c5ce7" }}>hAI</span>
+      </h1>
 
       <textarea
-        placeholder="Paste message you received..."
+        placeholder="Paste the message you received..."
         value={message}
         onChange={(e) => setMessage(e.target.value)}
-        style={{ width: "100%", height: 120 }}
+        style={{
+          width: "100%",
+          height: 120,
+          padding: 10,
+          fontSize: 16,
+        }}
       />
 
-      <br /><br />
+      <br />
+      <br />
 
-      <button onClick={generateReplies}>
+      <button
+        onClick={generate}
+        style={{
+          padding: "10px 18px",
+          fontSize: 16,
+          cursor: "pointer",
+        }}
+      >
         {loading ? "Generating..." : "Generate Replies"}
       </button>
 
-      <div style={{ marginTop: 30 }}>
-        {replies.map((reply, i) => (
-          <div
-            key={i}
+      {replies.map((r, i) => (
+        <div
+          key={i}
+          style={{
+            marginTop: 20,
+            padding: 15,
+            border: "1px solid #ccc",
+            borderRadius: 8,
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <span>{r.text}</span>
+
+          <button
+            onClick={() => copy(r.text, i)}
             style={{
-              border: "1px solid #ddd",
-              padding: 12,
-              marginBottom: 10,
-              borderRadius: 8,
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
+              fontSize: 14,
+              padding: "6px 10px",
+              cursor: "pointer",
             }}
           >
-            <span>{reply}</span>
+            {copiedIndex === i ? "Copied ✓" : "Copy"}
+          </button>
+        </div>
+      ))}
 
-            <button onClick={() => copyReply(reply)}>
-              Copy
-            </button>
-          </div>
-        ))}
-      </div>
+      {replies.length > 0 && (
+        <button
+          onClick={generate}
+          style={{
+            marginTop: 15,
+            padding: "10px 18px",
+            fontSize: 16,
+            cursor: "pointer",
+          }}
+        >
+          Generate Again
+        </button>
+      )}
     </main>
   );
 }
