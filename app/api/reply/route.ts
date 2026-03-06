@@ -1,41 +1,29 @@
 import OpenAI from "openai";
 
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
 export async function POST(req: Request) {
-  try {
-    const { message } = await req.json();
+  const { message } = await req.json();
 
-    const openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
-    });
+  const completion = await openai.chat.completions.create({
+    model: "gpt-4o-mini",
+    messages: [
+      {
+        role: "system",
+        content: "Generate 3 short text message replies.",
+      },
+      {
+        role: "user",
+        content: message,
+      },
+    ],
+  });
 
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [
-        {
-          role: "user",
-          content: `Generate 3 short text message replies to this message:
+  const text = completion.choices[0].message.content || "";
 
-"${message}"
+  const replies = text.split("\n").filter((r) => r.trim() !== "");
 
-Rules:
-- natural texting style
-- each reply on a new line
-- no explanations`,
-        },
-      ],
-    });
-
-    const text = completion.choices[0].message.content || "";
-
-    return Response.json({
-      reply: text,
-    });
-
-  } catch (error) {
-    console.error(error);
-    return Response.json(
-      { error: "AI generation failed" },
-      { status: 500 }
-    );
-  }
+  return Response.json({ replies });
 }
