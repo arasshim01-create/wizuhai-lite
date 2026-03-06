@@ -1,9 +1,10 @@
 "use client";
+
 import { useState } from "react";
 
 export default function Home() {
   const [message, setMessage] = useState("");
-  const [reply, setReply] = useState("");
+  const [replies, setReplies] = useState<string[]>([]);
 
   async function generateReply() {
     const res = await fetch("/api/reply", {
@@ -12,74 +13,73 @@ export default function Home() {
     });
 
     const data = await res.json();
-    setReply(data.reply);
+
+    setReplies(data.replies.map((r: any) => r.text));
   }
 
   return (
     <main
       style={{
-        minHeight: "100vh",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        background: "#0f0f0f",
-        color: "white",
+        padding: 40,
+        maxWidth: 700,
+        margin: "auto",
         fontFamily: "Arial",
+        textAlign: "center",
       }}
     >
-      <div style={{ width: 500, textAlign: "center" }}>
-        <h1 style={{ fontSize: 40, marginBottom: 10 }}>
-          Wizuh<span style={{ color: "#6c63ff" }}>AI</span>
-        </h1>
+      <h1 style={{ fontSize: 40 }}>
+        Wizuha<span style={{ color: "#7c6cff" }}>AI</span>
+      </h1>
 
-        <p style={{ marginBottom: 30, color: "#aaa" }}>
-          Generate smart replies instantly
-        </p>
+      <p style={{ opacity: 0.7 }}>Generate smart replies instantly</p>
 
-        <textarea
-          placeholder="Paste the message you received..."
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          style={{
-            width: "100%",
-            height: 120,
-            padding: 10,
-            borderRadius: 8,
-            border: "1px solid #333",
-            background: "#1a1a1a",
-            color: "white",
-          }}
-        />
+      <textarea
+        value={message}
+        onChange={(e) => setMessage(e.target.value)}
+        placeholder="Paste a message..."
+        style={{
+          width: "100%",
+          height: 120,
+          marginTop: 30,
+          padding: 15,
+          borderRadius: 10,
+          border: "1px solid #333",
+          background: "#111",
+          color: "white",
+        }}
+      />
 
-        <button
-          onClick={generateReply}
-          style={{
-            marginTop: 20,
-            padding: "12px 20px",
-            borderRadius: 8,
-            border: "none",
-            background: "#6c63ff",
-            color: "white",
-            fontSize: 16,
-            cursor: "pointer",
-          }}
-        >
-          Generate Reply
-        </button>
+      <button
+        onClick={generateReply}
+        style={{
+          marginTop: 20,
+          padding: "12px 24px",
+          borderRadius: 10,
+          background: "#7c6cff",
+          border: "none",
+          color: "white",
+          fontSize: 16,
+          cursor: "pointer",
+        }}
+      >
+        Generate Reply
+      </button>
 
-        {reply && (
+      <div style={{ marginTop: 40 }}>
+        {replies.map((reply, i) => (
           <div
+            key={i}
             style={{
-              marginTop: 30,
+              background: "#111",
               padding: 20,
-              borderRadius: 8,
-              background: "#1a1a1a",
-              textAlign: "left",
+              borderRadius: 10,
+              marginBottom: 15,
+              border: "1px solid #333",
             }}
           >
             {reply}
           </div>
-        )}
+        ))}
       </div>
     </main>
   );
