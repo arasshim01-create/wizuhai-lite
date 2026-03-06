@@ -81,11 +81,14 @@ export default function Home() {
             cursor: "pointer",
           }}
         >
-          Generate Reply
+          Generate Replies
         </button>
 
         {/* Replies */}
         <div style={{ marginTop: 30 }}>
+		{replies.length > 0 && (
+  <p>Choose one of these replies:</p>
+)}  
           {replies.map((reply, index) => (
             <div
               key={index}
