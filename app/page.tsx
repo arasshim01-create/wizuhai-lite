@@ -97,37 +97,41 @@ const copyReply = async (text: string, index: number) => {
         </button>
 
         <div style={{ textAlign: "left" }}>
-          {replies.length > 0 && (
-  <div style={{ marginTop: 30 }}>
-    {replies.map((reply, i) => (
-      <div
-        key={i}
-        style={{
-          background: "#111",
-          padding: 15,
-          borderRadius: 10,
-          marginBottom: 10,
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <span>{reply}</span>
+                {replies.length > 0 && (
+        <div style={{ marginTop: 30 }}>
+          {replies.map((reply, i) => (
+            <div
+              key={i}
+              style={{
+                background: "#111",
+                padding: 15,
+                borderRadius: 10,
+                marginBottom: 10,
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <span>{reply}</span>
 
-        <button
-          onClick={() => copyReply(reply, i)}
-          style={{
-            background: "#6c63ff",
-            border: "none",
-            padding: "6px 12px",
-            borderRadius: 6,
-            color: "white",
-            cursor: "pointer",
-          }}
-        >
-          {copiedIndex === i ? "Copied!" : "Copy"}
-        </button>
-      </div>
-    ))}
-  </div>
-)}
+              <button
+                onClick={() => copyReply(reply, i)}
+                style={{
+                  background: "#6c63ff",
+                  border: "none",
+                  padding: "6px 12px",
+                  borderRadius: 6,
+                  color: "white",
+                  cursor: "pointer",
+                }}
+              >
+                {copiedIndex === i ? "Copied!" : "Copy"}
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+
+    </div>
+  );
+}
