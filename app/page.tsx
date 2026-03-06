@@ -37,10 +37,13 @@ export default function Home() {
   return (
     <main
       style={{
-        padding: 40,
-        maxWidth: 700,
-        margin: "auto",
-        fontFamily: "Arial",
+  width: "100%",
+  height: 120,
+  padding: 14,
+  fontSize: 16,
+  borderRadius: 8,
+  border: "1px solid #ccc"
+}}
       }}
     >
      <h1
