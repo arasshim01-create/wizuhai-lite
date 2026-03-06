@@ -1,5 +1,7 @@
 "use client";
 import { useState } from "react";
+const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+
 
 export default function Home() {
   const [message, setMessage] = useState("");
@@ -27,7 +29,18 @@ export default function Home() {
 
     setLoading(false);
   }
+const copyReply = async (text: string, index: number) => {
+  try {
+    await navigator.clipboard.writeText(text);
+    setCopiedIndex(index);
 
+    setTimeout(() => {
+      setCopiedIndex(null);
+    }, 1000);
+  } catch (err) {
+    console.error("Copy failed", err);
+  }
+};
   return (
     <main
       style={{
@@ -84,22 +97,37 @@ export default function Home() {
         </button>
 
         <div style={{ textAlign: "left" }}>
-          {replies.map((reply, i) => (
-            <div
-              key={i}
-              style={{
-                background: "#111",
-                padding: 15,
-                borderRadius: 10,
-                marginBottom: 10,
-                border: "1px solid #333",
-              }}
-            >
-              {reply}
-            </div>
-          ))}
-        </div>
+          {replies.length > 0 && (
+  <div style={{ marginTop: 30 }}>
+    {replies.map((reply, i) => (
+      <div
+        key={i}
+        style={{
+          background: "#111",
+          padding: 15,
+          borderRadius: 10,
+          marginBottom: 10,
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <span>{reply}</span>
+
+        <button
+          onClick={() => copyReply(reply, i)}
+          style={{
+            background: "#6c63ff",
+            border: "none",
+            padding: "6px 12px",
+            borderRadius: 6,
+            color: "white",
+            cursor: "pointer",
+          }}
+        >
+          {copiedIndex === i ? "Copied!" : "Copy"}
+        </button>
       </div>
-    </main>
-  );
-}
+    ))}
+  </div>
+)}
