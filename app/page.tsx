@@ -85,10 +85,12 @@ export default function Home() {
         </button>
 
         {/* Replies */}
-        <div style={{ marginTop: 30 }}>
-		{replies.length > 0 && (
-  <p>Choose one of these replies:</p>
-)}  
+<div style={{ marginTop: 30 }}>
+  {replies.length > 0 && (
+    <p style={{ marginTop: 20, marginBottom: 20 }}>
+      Choose one of these replies:
+    </p>
+  )}  
           {replies.map((reply, index) => (
             <div
               key={index}
