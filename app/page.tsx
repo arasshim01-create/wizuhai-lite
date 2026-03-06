@@ -31,8 +31,8 @@ export default function Home() {
   }
 
   return (
-    <main style={{ padding: 40, maxWidth: 600 }}>
-      <h1>Wizuhai</h1>
+  <main style={{ padding: 40, maxWidth: 600 }}>
+    <h1>WizuhAI</h1>
 
       <textarea
         placeholder="Paste message you received..."
