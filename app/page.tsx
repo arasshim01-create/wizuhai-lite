@@ -28,17 +28,14 @@ export default function Home() {
       }}
     >
       <div style={{ width: 500, textAlign: "center" }}>
-        
-        {/* Title */}
         <h1 style={{ fontSize: 40, marginBottom: 10 }}>
-          Wizu<span style={{ color: "#6c63ff" }}>hAI</span>
+          Wizuh<span style={{ color: "#6c63ff" }}>AI</span>
         </h1>
 
         <p style={{ marginBottom: 30, color: "#aaa" }}>
           Generate smart replies instantly
         </p>
 
-        {/* Input */}
         <textarea
           placeholder="Paste the message you received..."
           value={message}
@@ -54,7 +51,6 @@ export default function Home() {
           }}
         />
 
-        {/* Button */}
         <button
           onClick={generateReply}
           style={{
@@ -71,7 +67,6 @@ export default function Home() {
           Generate Reply
         </button>
 
-        {/* Output */}
         {reply && (
           <div
             style={{
