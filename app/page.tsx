@@ -70,7 +70,7 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-black text-white flex flex-col items-center justify-center px-4">
+    <main className="min-h-screen bg-black text-white flex flex-col items-center px-4 py-10">
 
       <div className="w-full max-w-xl">
 
@@ -140,7 +140,7 @@ export default function Home() {
 
       </div>
 
-      <footer className="absolute bottom-4 right-6 text-sm text-gray-500">
+      <footer className="mt-16 mb-6 text-center text-sm text-gray-500">
         AI-powered message replies © 2026 WizuhAI
       </footer>
 
