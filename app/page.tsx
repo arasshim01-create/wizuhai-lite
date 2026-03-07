@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import Link from "next/link"
 
 function TypingText({ text }: { text: string }) {
   const [displayed, setDisplayed] = useState("")
@@ -132,7 +133,7 @@ export default function Home() {
 
         </div>
 
-        <div className="flex justify-center mb-10">
+        <div className="flex justify-center mb-4">
 
           <button
             onClick={generateReplies}
@@ -143,6 +144,16 @@ export default function Home() {
           </button>
 
         </div>
+
+        {/* Talk to AI Button */}
+
+        <Link href="/chat">
+
+          <button className="w-full border border-zinc-700 hover:bg-zinc-800 p-3 rounded-lg mb-10">
+            💬 Talk to AI
+          </button>
+
+        </Link>
 
         <div className="space-y-4">
 
