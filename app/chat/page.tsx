@@ -31,7 +31,11 @@ export default function ChatPage() {
   async function sendMessage() {
     if (!input.trim()) return;
 
-    const userMessage: Message = { role: "user", content: input };
+    const userMessage: Message = {
+      role: "user",
+      content: input,
+    };
+
     const newMessages = [...messages, userMessage];
 
     setMessages(newMessages);
@@ -64,9 +68,7 @@ export default function ChatPage() {
           <span className="text-white">Wizuh</span>
           <span className="text-purple-500">AI</span>
         </div>
-        <div className="text-zinc-400 text-sm">
-          Chat with WizuhAI
-        </div>
+        <div className="text-zinc-400 text-sm">Chat with WizuhAI</div>
       </div>
 
       <div className="flex-1 overflow-y-auto p-6 space-y-6">
@@ -105,11 +107,19 @@ export default function ChatPage() {
 
       <div className="border-t border-zinc-800 p-4 flex gap-3">
         <input
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Send a message..."
-          className="flex-1 bg-zinc-900 rounded-lg px-4 py-2 outline-none"
-        />
+  value={input}
+  onChange={(e) => setInput(e.target.value)}
+  onKeyDown={(e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      if (input.trim() !== "") {
+        sendMessage();
+      }
+    }
+  }}
+  placeholder="Send a message..."
+  className="flex-1 bg-zinc-900 rounded-lg px-4 py-2 outline-none"
+/>
 
         <button
           onClick={sendMessage}
