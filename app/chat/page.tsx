@@ -143,6 +143,3 @@ return ( <main className="min-h-screen bg-black text-white flex flex-col">
 
 </main>
 ```
-
-);
-}
