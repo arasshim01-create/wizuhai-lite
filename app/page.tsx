@@ -22,25 +22,45 @@ function TypingText({ text }: { text: string }) {
 }
 
 export default function Home() {
+
   const [message, setMessage] = useState("")
   const [replies, setReplies] = useState<string[]>([])
   const [loading, setLoading] = useState(false)
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null)
+  const [examples, setExamples] = useState<string[]>([])
 
-  const examples = [
+  const allExamples = [
     "Sorry I missed your call earlier.",
     "Are you free this weekend?",
     "Can you send the report today?",
-    "What time are we meeting tomorrow?"
+    "What time are we meeting tomorrow?",
+    "I’ll get back to you later.",
+    "Did you see my last message?",
+    "Let’s reschedule the meeting.",
+    "Thanks for your help earlier.",
+    "I'll call you tonight.",
+    "Can we talk later?"
   ]
 
+  useEffect(() => {
+
+    const shuffled = [...allExamples]
+      .sort(() => 0.5 - Math.random())
+      .slice(0, 4)
+
+    setExamples(shuffled)
+
+  }, [])
+
   const generateReplies = async () => {
+
     if (!message.trim()) return
 
     setLoading(true)
     setReplies([])
 
     try {
+
       const res = await fetch("/api/reply", {
         method: "POST",
         headers: {
@@ -52,6 +72,7 @@ export default function Home() {
       const data = await res.json()
 
       setReplies(data.replies || [])
+
     } catch (err) {
       console.error(err)
     }
@@ -60,6 +81,7 @@ export default function Home() {
   }
 
   const copyReply = (text: string, index: number) => {
+
     navigator.clipboard.writeText(text)
 
     setCopiedIndex(index)
@@ -67,9 +89,11 @@ export default function Home() {
     setTimeout(() => {
       setCopiedIndex(null)
     }, 2000)
+
   }
 
   return (
+
     <main className="min-h-screen bg-black text-white flex flex-col items-center px-4 py-10">
 
       <div className="w-full max-w-xl">
@@ -109,6 +133,7 @@ export default function Home() {
         </div>
 
         <div className="flex justify-center mb-10">
+
           <button
             onClick={generateReplies}
             disabled={loading}
@@ -116,15 +141,18 @@ export default function Home() {
           >
             {loading ? "Generating replies..." : "Generate Replies"}
           </button>
+
         </div>
 
         <div className="space-y-4">
 
           {replies.map((reply, index) => (
+
             <div
               key={index}
               className="bg-zinc-900 border border-zinc-700 p-4 rounded-lg"
             >
+
               <TypingText text={reply} />
 
               <button
@@ -133,10 +161,23 @@ export default function Home() {
               >
                 {copiedIndex === index ? "✓ Copied" : "Copy"}
               </button>
+
             </div>
+
           ))}
 
         </div>
+
+        {replies.length > 0 && (
+
+          <button
+            onClick={generateReplies}
+            className="mt-6 w-full border border-zinc-700 hover:bg-zinc-800 p-3 rounded-lg"
+          >
+            🔄 Regenerate Replies
+          </button>
+
+        )}
 
       </div>
 
@@ -145,5 +186,6 @@ export default function Home() {
       </footer>
 
     </main>
+
   )
 }
