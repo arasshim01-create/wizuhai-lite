@@ -7,10 +7,14 @@ function TypingText({ text }: { text: string }) {
 
   useEffect(() => {
     let i = 0
+
     const interval = setInterval(() => {
       setDisplayed(text.slice(0, i))
       i++
-      if (i > text.length) clearInterval(interval)
+
+      if (i > text.length) {
+        clearInterval(interval)
+      }
     }, 15)
 
     return () => clearInterval(interval)
@@ -30,7 +34,7 @@ export default function Home() {
   }
 
   const generateReplies = async () => {
-    if (!message) return
+    if (!message.trim()) return
 
     setLoading(true)
     setReplies([])
@@ -38,13 +42,16 @@ export default function Home() {
     try {
       const res = await fetch("/api/generate", {
         method: "POST",
-        body: JSON.stringify({ message }),
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ message })
       })
 
       const data = await res.json()
       setReplies(data.replies || [])
-    } catch (error) {
-      console.error(error)
+    } catch (err) {
+      console.error(err)
     }
 
     setLoading(false)
@@ -52,6 +59,7 @@ export default function Home() {
 
   const copyReply = (text: string, index: number) => {
     navigator.clipboard.writeText(text)
+
     setCopiedIndex(index)
 
     setTimeout(() => {
@@ -76,27 +84,28 @@ export default function Home() {
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           placeholder="Paste the message you received..."
-          className="w-full p-4 rounded-lg bg-zinc-900 border border-zinc-700 mb-3"
+          className="w-full p-4 rounded-lg bg-zinc-900 border border-zinc-700 mb-4"
           rows={4}
         />
 
         <button
           onClick={exampleMessage}
-          className="text-sm text-purple-400 hover:text-purple-300 mb-6"
+          className="block mx-auto text-sm text-purple-400 hover:text-purple-300 mb-8"
         >
           Try example message
         </button>
 
-        <button
-          onClick={generateReplies}
-          disabled={loading}
-          className="w-full sm:w-auto bg-purple-600 hover:bg-purple-700 px-6 py-3 rounded-lg font-medium mb-8"
-        >
-          {loading ? "Generating replies..." : "Generate Replies"}
-        </button>
+        <div className="flex justify-center mb-10">
+          <button
+            onClick={generateReplies}
+            disabled={loading}
+            className="bg-purple-600 hover:bg-purple-700 px-6 py-3 rounded-lg font-medium"
+          >
+            {loading ? "Generating replies..." : "Generate Replies"}
+          </button>
+        </div>
 
         <div className="space-y-4">
-
           {replies.map((reply, index) => (
             <div
               key={index}
@@ -112,7 +121,6 @@ export default function Home() {
               </button>
             </div>
           ))}
-
         </div>
 
       </div>
