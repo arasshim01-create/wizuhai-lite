@@ -52,7 +52,7 @@ export default function Home() {
       <div style={{ width: 500, textAlign: "center" }}>
         
         {/* Title */}
-        <h1 style={{ fontSize: 40, marginBottom: 10, color: "white" }}>
+        <h1 style={{ fontSize: 40, marginBottom: 10 }}>
           Wizuh<span style={{ color: "#6c63ff" }}>AI</span>
         </h1>
 
@@ -66,7 +66,7 @@ export default function Home() {
           Paste a message you received and get instant replies.
         </p>
 
-        {/* Input */}
+        {/* Textarea with glow */}
         <textarea
           placeholder="Paste the message you received..."
           value={message}
@@ -74,12 +74,23 @@ export default function Home() {
           style={{
             width: "100%",
             height: 120,
-            padding: 10,
-            borderRadius: 8,
+            padding: 12,
+            borderRadius: 10,
             border: "1px solid #333",
             background: "#1a1a1a",
             color: "white",
+            outline: "none",
+            transition: "all 0.2s ease",
+            boxShadow: "0 0 0px rgba(108,99,255,0)",
           }}
+          onFocus={(e) =>
+            (e.currentTarget.style.boxShadow =
+              "0 0 10px rgba(108,99,255,0.6)")
+          }
+          onBlur={(e) =>
+            (e.currentTarget.style.boxShadow =
+              "0 0 0px rgba(108,99,255,0)")
+          }
         />
 
         {/* Button */}
@@ -95,6 +106,7 @@ export default function Home() {
             color: "white",
             fontSize: 16,
             cursor: message.trim() ? "pointer" : "not-allowed",
+            width: "100%",
           }}
         >
           {loading ? "Generating..." : "Generate Replies"}
@@ -102,12 +114,6 @@ export default function Home() {
 
         {/* Replies */}
         <div style={{ marginTop: 30 }}>
-          {replies.length > 0 && (
-            <p style={{ marginTop: 20, marginBottom: 20 }}>
-              Choose one of these replies:
-            </p>
-          )}
-
           {replies.map((reply, index) => (
             <div
               key={index}
@@ -140,24 +146,22 @@ export default function Home() {
             </div>
           ))}
         </div>
-
       </div>
 
-      {/* Footer */}
+      {/* Bottom-right footer */}
       <footer
-  style={{
-    position: "fixed",
-    right: 20,
-    bottom: 20,
-    textAlign: "right",
-    fontSize: 12,
-    color: "#555",
-  }}
->
-  <div>AI-powered message replies</div>
-  <div>© {new Date().getFullYear()} WizuhAI. All rights reserved.</div>
-</footer>
-
+        style={{
+          position: "fixed",
+          right: 20,
+          bottom: 20,
+          textAlign: "right",
+          fontSize: 12,
+          color: "#555",
+        }}
+      >
+        <div>AI-powered message replies</div>
+        <div>© {new Date().getFullYear()} WizuhAI. All rights reserved.</div>
+      </footer>
     </main>
   );
 }
