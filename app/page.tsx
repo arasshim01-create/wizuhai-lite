@@ -5,8 +5,14 @@ export default function Home() {
   const [message, setMessage] = useState("");
   const [replies, setReplies] = useState<string[]>([]);
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+  const [loading, setLoading] = useState(false);
 
   async function generateReply() {
+    if (!message.trim()) return;
+
+    setLoading(true);
+    setReplies([]);
+
     const res = await fetch("/api/reply", {
       method: "POST",
       headers: {
@@ -16,7 +22,9 @@ export default function Home() {
     });
 
     const data = await res.json();
+
     setReplies(data.replies || []);
+    setLoading(false);
   }
 
   function copyReply(text: string, index: number) {
@@ -41,7 +49,7 @@ export default function Home() {
       }}
     >
       <div style={{ width: 500, textAlign: "center" }}>
-        
+
         {/* Title */}
         <h1 style={{ fontSize: 40, marginBottom: 10, color: "white" }}>
           Wizuh<span style={{ color: "#6c63ff" }}>AI</span>
@@ -70,27 +78,29 @@ export default function Home() {
         {/* Button */}
         <button
           onClick={generateReply}
+          disabled={!message.trim() || loading}
           style={{
             marginTop: 20,
             padding: "12px 20px",
             borderRadius: 8,
             border: "none",
-            background: "#6c63ff",
+            background: message.trim() ? "#6c63ff" : "#444",
             color: "white",
             fontSize: 16,
-            cursor: "pointer",
+            cursor: message.trim() ? "pointer" : "not-allowed",
           }}
         >
-          Generate Replies
+          {loading ? "Generating..." : "Generate Replies"}
         </button>
 
         {/* Replies */}
-<div style={{ marginTop: 30 }}>
-  {replies.length > 0 && (
-    <p style={{ marginTop: 20, marginBottom: 20 }}>
-      Choose one of these replies:
-    </p>
-  )}  
+        <div style={{ marginTop: 30 }}>
+          {replies.length > 0 && (
+            <p style={{ marginTop: 20, marginBottom: 20 }}>
+              Choose one of these replies:
+            </p>
+          )}
+
           {replies.map((reply, index) => (
             <div
               key={index}
