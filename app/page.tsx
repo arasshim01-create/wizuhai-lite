@@ -147,11 +147,11 @@ export default function Home() {
       <footer
   style={{
     position: "fixed",
-    left: 20,
+    right: 20,
     bottom: 20,
+    textAlign: "right",
     fontSize: 12,
     color: "#555",
-    textAlign: "left",
   }}
 >
   <div>AI-powered message replies</div>
