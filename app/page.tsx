@@ -12,9 +12,7 @@ function TypingText({ text }: { text: string }) {
       setDisplayed(text.slice(0, i))
       i++
 
-      if (i > text.length) {
-        clearInterval(interval)
-      }
+      if (i > text.length) clearInterval(interval)
     }, 15)
 
     return () => clearInterval(interval)
@@ -29,9 +27,23 @@ export default function Home() {
   const [loading, setLoading] = useState(false)
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null)
 
-  const exampleMessage = () => {
-    setMessage("Hey! Are you free this weekend to hang out?")
-  }
+  const examples = [
+    "Hey! Are you free this weekend to hang out?",
+    "Sorry I missed your call earlier.",
+    "Can you send the report today?",
+    "What time are we meeting tomorrow?",
+    "Thanks for getting back to me!"
+  ]
+
+  const [exampleIndex, setExampleIndex] = useState(0)
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setExampleIndex((prev) => (prev + 1) % examples.length)
+    }, 5000)
+
+    return () => clearInterval(interval)
+  }, [])
 
   const generateReplies = async () => {
     if (!message.trim()) return
@@ -49,6 +61,7 @@ export default function Home() {
       })
 
       const data = await res.json()
+
       setReplies(data.replies || [])
     } catch (err) {
       console.error(err)
@@ -89,10 +102,10 @@ export default function Home() {
         />
 
         <button
-          onClick={exampleMessage}
+          onClick={() => setMessage(examples[exampleIndex])}
           className="block mx-auto text-sm text-purple-400 hover:text-purple-300 mb-8"
         >
-          Try example message
+          Try example: "{examples[exampleIndex]}"
         </button>
 
         <div className="flex justify-center mb-10">
