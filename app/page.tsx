@@ -40,7 +40,7 @@ export default function Home() {
     setReplies([])
 
     try {
-      const res = await fetch("/api/generate", {
+      const res = await fetch("/api/reply", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
