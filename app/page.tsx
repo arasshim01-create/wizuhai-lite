@@ -145,18 +145,18 @@ export default function Home() {
 
       {/* Footer */}
       <footer
-        style={{
-          position: "absolute",
-          bottom: 20,
-          textAlign: "center",
-          fontSize: 12,
-          color: "#555",
-          width: "100%",
-        }}
-      >
-        <div>AI-powered message replies</div>
-        <div>© {new Date().getFullYear()} WizuhAI. All rights reserved.</div>
-      </footer>
+  style={{
+    position: "fixed",
+    left: 20,
+    bottom: 20,
+    fontSize: 12,
+    color: "#555",
+    textAlign: "left",
+  }}
+>
+  <div>AI-powered message replies</div>
+  <div>© {new Date().getFullYear()} WizuhAI. All rights reserved.</div>
+</footer>
 
     </main>
   );
