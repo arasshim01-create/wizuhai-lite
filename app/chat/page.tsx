@@ -3,116 +3,146 @@
 import { useState, useRef, useEffect } from "react";
 
 type Message = {
-  role: "user" | "assistant";
-  content: string;
+role: "user" | "assistant";
+content: string;
 };
 
 export default function ChatPage() {
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [input, setInput] = useState("");
-  const [loading, setLoading] = useState(false);
+const [messages, setMessages] = useState<Message[]>([
+{
+role: "assistant",
+content: "Hi! I'm WizuhAI 🤖 How can I help you today?",
+},
+]);
 
-  const bottomRef = useRef<HTMLDivElement | null>(null);
+const [input, setInput] = useState("");
+const [loading, setLoading] = useState(false);
 
-  function scrollToBottom() {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }
+const bottomRef = useRef<HTMLDivElement | null>(null);
 
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+function scrollToBottom() {
+bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+}
 
-  async function sendMessage() {
-    if (!input.trim()) return;
+useEffect(() => {
+scrollToBottom();
+}, [messages]);
 
-    const userMessage: Message = {
-      role: "user",
-      content: input,
-    };
+async function sendMessage() {
+if (!input.trim()) return;
 
-    const newMessages = [...messages, userMessage];
+```
+const userMessage: Message = {
+  role: "user",
+  content: input,
+};
 
-    setMessages(newMessages);
-    setInput("");
-    setLoading(true);
+const newMessages = [...messages, userMessage];
 
-    const res = await fetch("/api/chat", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ messages: newMessages }),
-    });
+setMessages(newMessages);
+setInput("");
+setLoading(true);
 
-    const data = await res.json();
+const res = await fetch("/api/chat", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({ messages: newMessages }),
+});
 
-    const aiMessage: Message = {
-      role: "assistant",
-      content: data.reply,
-    };
+const data = await res.json();
 
-    setMessages([...newMessages, aiMessage]);
-    setLoading(false);
-  }
+const aiMessage: Message = {
+  role: "assistant",
+  content: data.reply,
+};
 
-  return (
-    <main className="min-h-screen bg-black text-white flex flex-col">
+setMessages([...newMessages, aiMessage]);
+setLoading(false);
+```
 
-      {/* Header */}
-      <div className="border-b border-zinc-800 p-4 text-center text-xl font-semibold">
-        <span className="text-white">Wizuh</span>
-        <span className="text-purple-500">AI</span> Chat
-      </div>
+}
 
-      {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-6 space-y-6">
+return ( <main className="min-h-screen bg-black text-white flex flex-col">
 
-        {messages.map((msg, i) => (
-          <div
-            key={i}
-            className={`flex ${
-              msg.role === "user" ? "justify-end" : "justify-start"
-            }`}
-          >
-            <div
-              className={`max-w-[70%] rounded-xl px-4 py-3 ${
-                msg.role === "user"
-                  ? "bg-purple-600"
-                  : "bg-zinc-800"
-              }`}
-            >
-              {msg.content}
-            </div>
-          </div>
-        ))}
+```
+  {/* Header */}
+  <div className="border-b border-zinc-800 p-4 text-center">
 
-        {loading && (
-          <div className="text-zinc-400">AI is typing...</div>
+    <div className="text-xl font-semibold">
+      <span className="text-white">Wizuh</span>
+      <span className="text-purple-500">AI</span>
+    </div>
+
+    <div className="text-zinc-400 text-sm">
+      Chat with WizuhAI
+    </div>
+
+  </div>
+
+  {/* Messages */}
+  <div className="flex-1 overflow-y-auto p-6 space-y-6">
+
+    {messages.map((msg, i) => (
+      <div
+        key={i}
+        className={`flex gap-3 ${
+          msg.role === "user"
+            ? "justify-end"
+            : "justify-start"
+        }`}
+      >
+
+        {msg.role === "assistant" && (
+          <div className="text-2xl">🤖</div>
         )}
 
-        <div ref={bottomRef} />
-
-      </div>
-
-      {/* Input */}
-      <div className="border-t border-zinc-800 p-4 flex gap-3">
-
-        <input
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Send a message..."
-          className="flex-1 bg-zinc-900 rounded-lg px-4 py-2 outline-none"
-        />
-
-        <button
-          onClick={sendMessage}
-          className="bg-purple-600 px-5 py-2 rounded-lg hover:bg-purple-700"
+        <div
+          className={`max-w-[70%] rounded-xl px-4 py-3 ${
+            msg.role === "user"
+              ? "bg-purple-600"
+              : "bg-zinc-800"
+          }`}
         >
-          Send
-        </button>
+          {msg.content}
+        </div>
 
       </div>
+    ))}
 
-    </main>
-  );
+    {loading && (
+      <div className="flex gap-3 items-center text-zinc-400">
+        <div className="text-2xl">🤖</div>
+        <div>WizuhAI is typing...</div>
+      </div>
+    )}
+
+    <div ref={bottomRef} />
+
+  </div>
+
+  {/* Input */}
+  <div className="border-t border-zinc-800 p-4 flex gap-3">
+
+    <input
+      value={input}
+      onChange={(e) => setInput(e.target.value)}
+      placeholder="Send a message..."
+      className="flex-1 bg-zinc-900 rounded-lg px-4 py-2 outline-none"
+    />
+
+    <button
+      onClick={sendMessage}
+      className="bg-purple-600 px-5 py-2 rounded-lg hover:bg-purple-700"
+    >
+      Send
+    </button>
+
+  </div>
+
+</main>
+```
+
+);
 }
