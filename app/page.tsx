@@ -28,22 +28,11 @@ export default function Home() {
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null)
 
   const examples = [
-    "Hey! Are you free this weekend to hang out?",
     "Sorry I missed your call earlier.",
+    "Are you free this weekend?",
     "Can you send the report today?",
-    "What time are we meeting tomorrow?",
-    "Thanks for getting back to me!"
+    "What time are we meeting tomorrow?"
   ]
-
-  const [exampleIndex, setExampleIndex] = useState(0)
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setExampleIndex((prev) => (prev + 1) % examples.length)
-    }, 5000)
-
-    return () => clearInterval(interval)
-  }, [])
 
   const generateReplies = async () => {
     if (!message.trim()) return
@@ -89,7 +78,7 @@ export default function Home() {
           Wizuh<span className="text-purple-500">AI</span>
         </h1>
 
-        <p className="text-center text-gray-400 mb-8">
+        <p className="text-center text-gray-400 mb-6">
           Generate smart replies instantly
         </p>
 
@@ -97,16 +86,27 @@ export default function Home() {
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           placeholder="Paste the message you received..."
-          className="w-full p-4 rounded-lg bg-zinc-900 border border-zinc-700 mb-4"
+          className="w-full p-4 rounded-lg bg-zinc-900 border border-zinc-700 mb-6"
           rows={4}
         />
 
-        <button
-          onClick={() => setMessage(examples[exampleIndex])}
-          className="block mx-auto text-sm text-purple-400 hover:text-purple-300 mb-8"
-        >
-          Try example: "{examples[exampleIndex]}"
-        </button>
+        <p className="text-sm text-gray-400 mb-3 text-center">
+          Try an example
+        </p>
+
+        <div className="flex flex-wrap justify-center gap-2 mb-8">
+
+          {examples.map((example, index) => (
+            <button
+              key={index}
+              onClick={() => setMessage(example)}
+              className="text-sm px-3 py-2 rounded-full bg-zinc-800 hover:bg-zinc-700 border border-zinc-700"
+            >
+              {example}
+            </button>
+          ))}
+
+        </div>
 
         <div className="flex justify-center mb-10">
           <button
@@ -119,6 +119,7 @@ export default function Home() {
         </div>
 
         <div className="space-y-4">
+
           {replies.map((reply, index) => (
             <div
               key={index}
@@ -134,6 +135,7 @@ export default function Home() {
               </button>
             </div>
           ))}
+
         </div>
 
       </div>
