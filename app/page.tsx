@@ -46,17 +46,24 @@ export default function Home() {
         justifyContent: "center",
         alignItems: "center",
         fontFamily: "Arial",
+        position: "relative",
       }}
     >
       <div style={{ width: 500, textAlign: "center" }}>
-
+        
         {/* Title */}
         <h1 style={{ fontSize: 40, marginBottom: 10, color: "white" }}>
           Wizuh<span style={{ color: "#6c63ff" }}>AI</span>
         </h1>
 
-        <p style={{ marginBottom: 30, color: "#aaa" }}>
+        {/* Subtitle */}
+        <p style={{ marginBottom: 10, color: "#aaa" }}>
           Generate smart replies instantly
+        </p>
+
+        {/* Explanation */}
+        <p style={{ marginBottom: 30, color: "#777", fontSize: 14 }}>
+          Paste a message you received and get instant replies.
         </p>
 
         {/* Input */}
@@ -135,6 +142,22 @@ export default function Home() {
         </div>
 
       </div>
+
+      {/* Footer */}
+      <footer
+        style={{
+          position: "absolute",
+          bottom: 20,
+          textAlign: "center",
+          fontSize: 12,
+          color: "#555",
+          width: "100%",
+        }}
+      >
+        <div>AI-powered message replies</div>
+        <div>© {new Date().getFullYear()} WizuhAI. All rights reserved.</div>
+      </footer>
+
     </main>
   );
 }
