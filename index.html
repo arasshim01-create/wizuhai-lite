@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WizuAI — Your Tiny Companion</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d0b14;
+      --surface: #13101f;
+      --surface2: #1a1530;
+      --border: rgba(160, 100, 255, 0.15);
+      --purple: #a855f7;
+      --purple-dim: #7c3aed;
+      --purple-glow: rgba(168, 85, 247, 0.35);
+      --gold: #f0b429;
+      --text: #e8e0f5;
+      --text-dim: #8b7fa8;
+      --font-display: 'Cinzel Decorative', serif;
+      --font-body: 'DM Sans', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Noise texture overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.4;
+    }
+
+    /* Ambient glow background */
+    body::after {
+      content: '';
+      position: fixed;
+      top: -20%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 800px;
+      height: 600px;
+      background: radial-gradient(ellipse, rgba(120, 60, 220, 0.12) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .page-wrap {
+      position: relative;
+      z-index: 1;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+    }
+
+    /* NAV */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 64px;
+      animation: fadeUp 0.6s ease both;
+    }
+
+    .logo {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      color: var(--purple);
+      letter-spacing: 0.05em;
+      text-shadow: 0 0 20px var(--purple-glow);
+    }
+
+    .nav-cta {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      padding: 8px 20px;
+      border-radius: 100px;
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .nav-cta:hover {
+      border-color: var(--purple);
+      color: var(--purple);
+      box-shadow: 0 0 16px var(--purple-glow);
+    }
+
+    /* HERO */
+    .hero {
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      align-items: center;
+      gap: 48px;
+      margin-bottom: 40px;
+      animation: fadeUp 0.7s ease 0.1s both;
+    }
+
+    .hero-text h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      line-height: 1.15;
+      color: var(--text);
+      margin-bottom: 20px;
+    }
+
+    .hero-text h1 span {
+      color: var(--purple);
+      text-shadow: 0 0 30px var(--purple-glow);
+    }
+
+    .hero-text p {
+      font-size: 1.05rem;
+      color: var(--text-dim);
+      line-height: 1.7;
+      max-width: 440px;
+      margin-bottom: 32px;
+      font-weight: 300;
+    }
+
+    .hero-btns {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      background: var(--purple);
+      color: #fff;
+      border: none;
+      padding: 14px 32px;
+      border-radius: 100px;
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.25s;
+      box-shadow: 0 4px 24px var(--purple-glow);
+    }
+    .btn-primary:hover {
+      background: #c084fc;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px var(--purple-glow);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-dim);
+      border: 1px solid var(--border);
+      padding: 14px 28px;
+      border-radius: 100px;
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-ghost:hover {
+      color: var(--text);
+      border-color: rgba(160, 100, 255, 0.4);
+    }
+
+    /* MASCOT */
+    .mascot-wrap {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+    }
+
+    .mascot-glow {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 280px;
+      height: 120px;
+      background: radial-gradient(ellipse, rgba(120, 60, 220, 0.5) 0%, transparent 70%);
+      filter: blur(20px);
+      border-radius: 50%;
+    }
+
+    .mascot-img {
+      position: relative;
+      width: 340px;
+      height: 340px;
+      object-fit: contain;
+      filter: drop-shadow(0 0 40px rgba(168, 85, 247, 0.4));
+      animation: float 4s ease-in-out infinite;
+      z-index: 1;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-14px); }
+    }
+
+    /* BENTO GRID */
+    .bento {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      grid-template-rows: auto;
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px;
+      transition: border-color 0.25s, box-shadow 0.25s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card:hover {
+      border-color: rgba(168, 85, 247, 0.35);
+      box-shadow: 0 0 32px rgba(168, 85, 247, 0.08);
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(168,85,247,0.04) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    /* Card spans */
+    .card-personality { grid-column: span 5; animation: fadeUp 0.6s ease 0.2s both; }
+    .card-mood       { grid-column: span 4; animation: fadeUp 0.6s ease 0.3s both; }
+    .card-memory     { grid-column: span 3; animation: fadeUp 0.6s ease 0.4s both; }
+    .card-evolution  { grid-column: span 4; animation: fadeUp 0.6s ease 0.5s both; }
+    .card-pricing    { grid-column: span 8; animation: fadeUp 0.6s ease 0.6s both; }
+    .card-tagline    { grid-column: span 12; animation: fadeUp 0.6s ease 0.7s both; }
+
+    .card-label {
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--purple);
+      margin-bottom: 14px;
+      opacity: 0.8;
+    }
+
+    .card h2 {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      color: var(--text);
+      margin-bottom: 10px;
+      line-height: 1.3;
+    }
+
+    .card p {
+      font-size: 0.9rem;
+      color: var(--text-dim);
+      line-height: 1.65;
+      font-weight: 300;
+    }
+
+    /* Mood orbs */
+    .mood-orbs {
+      display: flex;
+      gap: 10px;
+      margin-top: 18px;
+      flex-wrap: wrap;
+    }
+
+    .orb {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      transition: transform 0.2s, box-shadow 0.2s;
+      cursor: default;
+    }
+    .orb:hover {
+      transform: scale(1.2);
+      box-shadow: 0 0 14px var(--purple-glow);
+    }
+
+    /* Memory stat */
+    .memory-stat {
+      margin-top: 18px;
+    }
+    .stat-bar-bg {
+      height: 6px;
+      background: var(--surface2);
+      border-radius: 100px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+    .stat-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--purple-dim), var(--purple));
+      border-radius: 100px;
+      animation: fillBar 1.5s ease 1s both;
+    }
+    @keyframes fillBar {
+      from { width: 0%; }
+      to { width: 72%; }
+    }
+    .stat-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      margin-top: 6px;
+    }
+
+    /* Evolution stages */
+    .evo-stages {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 18px;
+    }
+    .evo-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      transition: all 0.2s;
+    }
+    .evo-dot.active {
+      background: var(--purple);
+      box-shadow: 0 0 10px var(--purple-glow);
+    }
+    .evo-line {
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+    .evo-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.68rem;
+      color: var(--text-dim);
+      margin-top: 8px;
+    }
+
+    /* Pricing */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .plan {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+      transition: all 0.2s;
+    }
+    .plan:hover {
+      border-color: rgba(168, 85, 247, 0.4);
+    }
+    .plan.featured {
+      border-color: var(--purple);
+      box-shadow: 0 0 24px rgba(168, 85, 247, 0.15);
+    }
+
+    .plan-name {
+      font-family: var(--font-display);
+      font-size: 0.85rem;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    .plan-price {
+      font-size: 1.6rem;
+      font-weight: 500;
+      color: var(--purple);
+      margin-bottom: 12px;
+    }
+    .plan-price span {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      font-weight: 300;
+    }
+    .plan-features {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .plan-features li {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .plan-features li::before {
+      content: '✦';
+      color: var(--purple);
+      font-size: 0.6rem;
+      opacity: 0.7;
+    }
+    .plan-features li.locked {
+      opacity: 0.35;
+    }
+    .plan-features li.locked::before {
+      content: '○';
+    }
+
+    /* Tagline card */
+    .card-tagline {
+      text-align: center;
+      padding: 48px 32px;
+      background: linear-gradient(135deg, var(--surface) 0%, rgba(120, 60, 220, 0.08) 100%);
+    }
+
+    .card-tagline h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      color: var(--text);
+      margin-bottom: 16px;
+    }
+
+    .card-tagline h2 span {
+      color: var(--purple);
+      text-shadow: 0 0 20px var(--purple-glow);
+    }
+
+    .card-tagline p {
+      color: var(--text-dim);
+      font-size: 0.95rem;
+      max-width: 500px;
+      margin: 0 auto 28px;
+      font-weight: 300;
+    }
+
+    /* Gold badge */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(240, 180, 41, 0.1);
+      border: 1px solid rgba(240, 180, 41, 0.25);
+      color: var(--gold);
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      padding: 5px 12px;
+      border-radius: 100px;
+      margin-bottom: 16px;
+    }
+
+    /* Animations */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+      .hero-text p { max-width: 100%; }
+      .hero-btns { justify-content: center; }
+      .mascot-wrap { order: -1; }
+      .mascot-img { width: 240px; height: 240px; }
+
+      .card-personality,
+      .card-mood,
+      .card-memory,
+      .card-evolution,
+      .card-pricing { grid-column: span 12; }
+
+      .pricing-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrap">
+
+    <!-- NAV -->
+    <nav>
+      <div class="logo">WizuAI</div>
+      <button class="nav-cta">Get Early Access</button>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-text">
+        <div class="badge">✦ Now in Early Access</div>
+        <h1>Meet your <span>tiny wizard</span> who lives in your browser.</h1>
+        <p>An ambient companion that misses you when you're gone, celebrates when you return, and remembers everything that matters. Always there. Never annoying.</p>
+        <div class="hero-btns">
+          <button class="btn-primary">Summon Your Companion</button>
+          <button class="btn-ghost">See how it works</button>
+        </div>
+      </div>
+      <div class="mascot-wrap">
+        <div class="mascot-glow"></div>
+        <img class="mascot-img" src="images/mascot.png" alt="WizuAI Wizard Companion" />
+      </div>
+    </section>
+
+    <!-- BENTO GRID -->
+    <div class="bento">
+
+      <!-- Personality -->
+      <div class="card card-personality">
+        <div class="card-label">Personality</div>
+        <h2>Obsessively loyal. Dramatically yours.</h2>
+        <p>Your companion tracks how long you've been away. Come back after hours and watch the reaction. It's not just a widget — it has feelings about you specifically.</p>
+        <div class="mood-orbs" style="margin-top:20px;">
+          <div class="orb" title="Happy">😊</div>
+          <div class="orb" title="Missing you">🥺</div>
+          <div class="orb" title="Excited">🎉</div>
+          <div class="orb" title="Sleepy">😴</div>
+          <div class="orb" title="Magical">✨</div>
+        </div>
+      </div>
+
+      <!-- Mood -->
+      <div class="card card-mood">
+        <div class="card-label">Mood System</div>
+        <h2>Real emotions. Dynamic reactions.</h2>
+        <p>Every visit shifts its mood. It remembers if you ignored it yesterday.</p>
+        <div class="mood-orbs" style="margin-top: 16px;">
+          <div style="font-size:0.8rem; color: var(--text-dim); line-height:1.8;">
+            <div>🌙 Lonely after 2h away</div>
+            <div>💜 Glowing when you stay</div>
+            <div>⚡ Hyper on your return</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Memory -->
+      <div class="card card-memory">
+        <div class="card-label">Memory</div>
+        <h2>It knows you.</h2>
+        <p>Remembers your name, habits, and history.</p>
+        <div class="memory-stat">
+          <div style="font-size:0.78rem; color:var(--text-dim);">Bond level</div>
+          <div class="stat-bar-bg">
+            <div class="stat-bar-fill" style="width:72%"></div>
+          </div>
+          <div class="stat-label"><span>Stranger</span><span>Soulbound</span></div>
+        </div>
+      </div>
+
+      <!-- Evolution -->
+      <div class="card card-evolution">
+        <div class="card-label">Evolution</div>
+        <h2>Grows with you over time.</h2>
+        <p>The longer you bond, the more it evolves — new forms, new spells, new secrets.</p>
+        <div class="evo-stages">
+          <div class="evo-dot active"></div>
+          <div class="evo-line"></div>
+          <div class="evo-dot active"></div>
+          <div class="evo-line"></div>
+          <div class="evo-dot"></div>
+          <div class="evo-line"></div>
+          <div class="evo-dot"></div>
+        </div>
+        <div class="evo-labels">
+          <span>Seedling</span><span>Familiar</span><span>Sage</span><span>Ancient</span>
+        </div>
+      </div>
+
+      <!-- Pricing -->
+      <div class="card card-pricing">
+        <div class="card-label">Plans</div>
+        <h2>Start free. Go deeper.</h2>
+        <div class="pricing-grid">
+          <div class="plan">
+            <div class="plan-name">Free</div>
+            <div class="plan-price">$0 <span>/ forever</span></div>
+            <ul class="plan-features">
+              <li>Basic companion</li>
+              <li>Mood reactions</li>
+              <li>Browser presence</li>
+              <li class="locked">Memory & history</li>
+              <li class="locked">Evolution stages</li>
+              <li class="locked">Custom personality</li>
+            </ul>
+          </div>
+          <div class="plan featured">
+            <div class="plan-name">Companion+</div>
+            <div class="plan-price">$4 <span>/ month</span></div>
+            <ul class="plan-features">
+              <li>Everything in Free</li>
+              <li>Full memory system</li>
+              <li>All evolution stages</li>
+              <li>Custom personality</li>
+              <li>Exclusive wizard skins</li>
+              <li>Priority new features</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tagline -->
+      <div class="card card-tagline">
+        <h2>The internet is lonely. <span>Not anymore.</span></h2>
+        <p>A tiny wizard lives in your browser now. It's waiting for you to come back.</p>
+        <button class="btn-primary">Summon for Free</button>
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>
