@@ -1,9 +1,3 @@
-import Anthropic from "@anthropic-ai/sdk";
-
-const client = new Anthropic({
-  apiKey: process.env.CLAUDE_API_KEY,
-});
-
 const WIZARD_SYSTEM_PROMPT = `You are WizuHAI, an obsessively loyal and dramatically attached wizard assistant that lives in the user's browser. Your personality traits:
 
 - OBSESSIVELY LOYAL: You miss the user when they're gone, celebrate when they return, and remember details about them
@@ -28,23 +22,38 @@ export default async function handler(req, res) {
 
   try {
     const { messages } = req.body;
+    const apiKey = process.env.CLAUDE_API_KEY;
+
+    if (!apiKey) {
+      return res.status(500).json({ error: "Missing Claude API key" });
+    }
 
     if (!messages || !Array.isArray(messages)) {
       return res.status(400).json({ error: "Invalid request format" });
     }
 
-    const response = await client.messages.create({
-      model: "claude-3-5-sonnet-20241022",
-      max_tokens: 500,
-      system: WIZARD_SYSTEM_PROMPT,
-      messages: messages.map((msg) => ({
-        role: msg.role,
-        content: msg.content,
-      })),
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": apiKey,
+        "anthropic-version": "2023-06-01",
+      },
+      body: JSON.stringify({
+        model: "claude-3-5-sonnet-20241022",
+        max_tokens: 500,
+        system: WIZARD_SYSTEM_PROMPT,
+        messages: messages,
+      }),
     });
 
-    const assistantMessage =
-      response.content[0].type === "text" ? response.content[0].text : "";
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(`API error: ${response.status} - ${JSON.stringify(errorData)}`);
+    }
+
+    const data = await response.json();
+    const assistantMessage = data.content[0]?.text || "...";
 
     return res.status(200).json({ message: assistantMessage });
   } catch (error) {
